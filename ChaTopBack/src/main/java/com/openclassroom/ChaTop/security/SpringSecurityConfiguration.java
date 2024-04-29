@@ -1,4 +1,4 @@
-package com.openclassroom.ChaTop.configuration;
+package com.openclassroom.ChaTop.security;
 
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;

@@ -33,11 +33,11 @@ public class Message {
     private String message;
 
     @ManyToOne
-    @Column(name = "rental_id")
+    @JoinColumn(name = "rental_id")
     private Rental rental;
 
     @ManyToOne
-    @Column(name = "user_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @CreatedDate

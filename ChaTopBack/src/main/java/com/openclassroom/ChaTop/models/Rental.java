@@ -33,9 +33,6 @@ public class Rental {
     @Size(max = 255)
     private String name;
 
-    @Column(name = "owner_id")
-    private Long ownerId;
-
     private BigDecimal surface;
 
     private BigDecimal price;
