@@ -22,13 +22,13 @@ public class RentalController {
   }
 
   @GetMapping()
-  public ResponseEntity<?> findAll() {
+  public ResponseEntity<List<RentalDto>> findAll() {
     List<Rental> rentals =this.rentalService.findAll();
     return ResponseEntity.ok().body(this.rentalMapper.toDto(rentals));
   }
 
   @PostMapping()
-  public ResponseEntity<?> create(@Valid @RequestBody RentalDto rentalDto) {
+  public ResponseEntity<RentalDto> create(@Valid @RequestBody RentalDto rentalDto) {
     log.info(rentalDto);
 
     Rental rental = this.rentalService.create(this.rentalMapper.toEntity(rentalDto));
@@ -38,7 +38,7 @@ public class RentalController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<?> findById(@PathVariable("id") String id) {
+  public ResponseEntity<RentalDto> findById(@PathVariable("id") String id) {
     try {
       Rental rental = this.rentalService.findById(Long.valueOf(id));
 
@@ -52,7 +52,7 @@ public class RentalController {
   }
 
   @PutMapping("{id}")
-  public ResponseEntity<?> update(@PathVariable("id") String id, @Valid @RequestBody RentalDto rentalDto) {
+  public ResponseEntity<RentalDto> update(@PathVariable("id") String id, @Valid @RequestBody RentalDto rentalDto) {
     try {
      Rental rental = this.rentalService.update(Long.parseLong(id), this.rentalMapper.toEntity(rentalDto));
 

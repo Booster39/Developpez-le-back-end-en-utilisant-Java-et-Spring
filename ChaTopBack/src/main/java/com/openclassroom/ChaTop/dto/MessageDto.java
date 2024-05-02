@@ -18,11 +18,8 @@ public class MessageDto {
   @Size(max = 2000)
   private String message;
 
-  private Long rental_id;
+  private Long rentalId;
 
-  private Long user_id;
+  private Long userId;
 
-  private LocalDateTime createdAt;
-
-  private LocalDateTime updatedAt;
 }

@@ -23,7 +23,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @AllArgsConstructor
-@ToString
 public class Rental {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

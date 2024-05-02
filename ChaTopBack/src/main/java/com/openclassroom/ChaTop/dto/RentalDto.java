@@ -20,7 +20,7 @@ public class RentalDto {
   @Size(max = 255)
   private String name;
 
-  private Long owner_id;
+  private Long ownerId;
 
   private BigDecimal surface;
 
@@ -33,8 +33,4 @@ public class RentalDto {
   @NonNull
   @Size(max = 2000)
   private String description;
-
-  private LocalDateTime createdAt;
-
-  private LocalDateTime updatedAt;
 }

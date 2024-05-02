@@ -5,12 +5,16 @@ import com.openclassroom.ChaTop.models.Rental;
 import java.util.ArrayList;
 import java.util.List;
 
-import lombok.Data;
+import com.openclassroom.ChaTop.models.User;
+import com.openclassroom.ChaTop.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-@Data
 public class RentalMapper implements EntityMapper<RentalDto, Rental> {
+
+  @Autowired
+  UserRepository userRepository;
 
   @Override
   public Rental toEntity(RentalDto dto) {
@@ -26,8 +30,9 @@ public class RentalMapper implements EntityMapper<RentalDto, Rental> {
     rental.price( dto.getPrice() );
     rental.picture( dto.getPicture() );
     rental.description( dto.getDescription() );
-    rental.createdAt( dto.getCreatedAt() );
-    rental.updatedAt( dto.getUpdatedAt() );
+
+    User owner = userRepository.findById(dto.getOwnerId()).orElse(null);
+    rental.owner(owner);
 
     return rental.build();
   }
@@ -46,8 +51,7 @@ public class RentalMapper implements EntityMapper<RentalDto, Rental> {
     rentalDto.setPrice( entity.getPrice() );
     rentalDto.setPicture( entity.getPicture() );
     rentalDto.setDescription( entity.getDescription() );
-    rentalDto.setCreatedAt( entity.getCreatedAt() );
-    rentalDto.setUpdatedAt( entity.getUpdatedAt() );
+    rentalDto.setOwnerId(entity.getOwner().getId());
 
     return rentalDto;
   }

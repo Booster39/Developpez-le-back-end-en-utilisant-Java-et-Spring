@@ -25,7 +25,7 @@ public class MessageController {
   }
 
   @PostMapping()
-  public ResponseEntity<?> create(@Valid @RequestBody MessageDto messageDto) {
+  public ResponseEntity<MessageDto> create(@Valid @RequestBody MessageDto messageDto) {
     log.info(messageDto);
 
     Message message = this.messageService.create(this.messageMapper.toEntity(messageDto));

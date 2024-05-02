@@ -12,6 +12,9 @@ public class MessageService {
   public MessageService(MessageRepository messageRepository) {
     this.messageRepository = messageRepository;
   }
+  public Message findById(Long id) {
+    return this.messageRepository.findById(id).orElse(null);
+  }
   public Message create(Message message) {
     return this.messageRepository.save(message);
   }

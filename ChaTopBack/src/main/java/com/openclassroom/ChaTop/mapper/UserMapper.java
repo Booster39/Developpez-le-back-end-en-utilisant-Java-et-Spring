@@ -9,6 +9,7 @@ import java.util.List;
 
 @Component
 public class UserMapper implements EntityMapper<UserDto, User> {
+
   @Override
   public User toEntity(UserDto dto) {
     if ( dto == null ) {
@@ -20,8 +21,8 @@ public class UserMapper implements EntityMapper<UserDto, User> {
     user.id( dto.getId() );
     user.name( dto.getName() );
     user.email( dto.getEmail() );
-    user.createdAt( dto.getCreatedAt() );
-    user.updatedAt( dto.getUpdatedAt() );
+    user.messages(dto.getMessages());
+    user.rentals(dto.getRentals());
 
     return user.build();
   }
@@ -37,8 +38,8 @@ public class UserMapper implements EntityMapper<UserDto, User> {
     userDto.setId( entity.getId() );
     userDto.setName( entity.getName() );
     userDto.setEmail( entity.getEmail() );
-    userDto.setCreatedAt( entity.getCreatedAt() );
-    userDto.setUpdatedAt( entity.getUpdatedAt() );
+    userDto.setMessages(entity.getMessages());
+    userDto.setRentals(entity.getRentals());
 
     return userDto;
   }

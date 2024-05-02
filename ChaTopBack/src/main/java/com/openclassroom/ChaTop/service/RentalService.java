@@ -1,6 +1,5 @@
 package com.openclassroom.ChaTop.service;
 
-import com.openclassroom.ChaTop.models.Message;
 import com.openclassroom.ChaTop.models.Rental;
 import com.openclassroom.ChaTop.repository.RentalRepository;
 import org.springframework.stereotype.Service;
