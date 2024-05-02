@@ -7,21 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -29,11 +24,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
-  @Autowired
-  UserDetailsServiceImpl userDetailsServiceImplem;
+
+ private final UserDetailsServiceImpl userDetailsServiceImplem;
 
   @Autowired
   AuthEntryPointJwt unauthorizedHandler;
+
+  @Autowired
+  public WebSecurityConfig(UserDetailsServiceImpl userDetailsServiceImplem) {
+    this.userDetailsServiceImplem = userDetailsServiceImplem;
+  }
 
 
   @Bean
@@ -41,27 +41,33 @@ public class WebSecurityConfig {
     return new AuthTokenFilter();
   }
 
- @Bean
-  public AuthenticationManager authenticationManager(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-  authenticationManagerBuilder.userDetailsService(userDetailsServiceImplem).passwordEncoder(passwordEncoder());
-  return authenticationManagerBuilder.build();
+  @Bean
+  public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    return authenticationConfiguration.getAuthenticationManager();
   }
+
 
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
 
+
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http.cors(CorsConfigurer<HttpSecurity>::disable).csrf(AbstractHttpConfigurer::disable)
+    http.csrf(AbstractHttpConfigurer::disable)
       .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(unauthorizedHandler))
-      .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-      .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry.requestMatchers("/api/auth/**").permitAll()
-        .requestMatchers("/api/**").authenticated().anyRequest().authenticated());
-
-    http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+    .sessionManagement(session -> session
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+      .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class
+      );
+    http.authorizeHttpRequests(auth -> auth
+      .requestMatchers("/api/**").permitAll()
+      .requestMatchers("/api/auth/**").permitAll()
+      .requestMatchers("/auth/welcome", "/auth/register", "/auth/login").permitAll()
+      .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+      .anyRequest().authenticated()
+    );
     return http.build();
   }
-
 }

@@ -32,7 +32,18 @@ public class UserDetailsServiceImpl implements UserDetailsService {
   }
 
   @Override
-  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    return null;
+  @Transactional
+  public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    User user = userRepository.findByEmail(email)
+      .orElseThrow(() -> new UsernameNotFoundException("User Not Found with email: " + email));
+
+    return UserDetailsImpl
+      .builder()
+      .id(user.getId())
+      .password(user.getPassword())
+      .name(user.getName())
+      .email(user.getEmail())
+      .username(user.getEmail())
+      .build();
   }
 }
