@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import jakarta.servlet.ServletException;
@@ -16,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class AuthEntryPointJwt implements AuthenticationEntryPoint {
+public class AuthEntryPointJwt implements AuthenticationEntryPoint, AuthenticationSuccessHandler {
 
   private static final Logger logger = LoggerFactory.getLogger(AuthEntryPointJwt.class);
 
@@ -36,6 +38,16 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 
     final ObjectMapper mapper = new ObjectMapper();
     mapper.writeValue(response.getOutputStream(), body);
+  }
+
+  @Override
+  public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
+    throws IOException, ServletException {
+    // Vous pouvez mettre ici le code à exécuter en cas de réussite de l'authentification
+    logger.info("Authentication successful for user: {}", authentication.getName());
+    // Vous pouvez rediriger l'utilisateur ou envoyer une réponse personnalisée en cas de réussite
+    response.setStatus(HttpServletResponse.SC_OK);
+    response.getWriter().println("Authentication successful");
   }
 
 }

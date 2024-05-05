@@ -3,12 +3,14 @@ package com.openclassroom.ChaTop.controller;
 import com.openclassroom.ChaTop.dto.RentalDto;
 import com.openclassroom.ChaTop.mapper.RentalMapper;
 import com.openclassroom.ChaTop.models.Rental;
+import com.openclassroom.ChaTop.payload.response.MessageResponse;
 import com.openclassroom.ChaTop.service.RentalService;
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -22,19 +24,24 @@ public class RentalController {
   }
 
   @GetMapping()
-  public ResponseEntity<List<RentalDto>> findAll() {
+  public ResponseEntity<HashMap<String, List<RentalDto>>> findAll() {
     List<Rental> rentals =this.rentalService.findAll();
-    return ResponseEntity.ok().body(this.rentalMapper.toDto(rentals));
+    var response = new HashMap<String, List<RentalDto>>();
+    response.put("rentals", this.rentalMapper.toDto(rentals));
+    return ResponseEntity.ok().body(response);
   }
 
   @PostMapping()
-  public ResponseEntity<RentalDto> create(@Valid @RequestBody RentalDto rentalDto) {
+  public ResponseEntity<HashMap<
+    MessageResponse, RentalDto>> create(@Valid @RequestBody RentalDto rentalDto) {
     log.info(rentalDto);
 
     Rental rental = this.rentalService.create(this.rentalMapper.toEntity(rentalDto));
-
+    var response = new HashMap<
+      MessageResponse, RentalDto>();
+    response.put(new MessageResponse("Rental created !"), this.rentalMapper.toDto(rental) );
     log.info(rental);
-    return ResponseEntity.ok().body(this.rentalMapper.toDto(rental));
+    return ResponseEntity.ok().body(response);
   }
 
   @GetMapping("/{id}")
@@ -52,11 +59,14 @@ public class RentalController {
   }
 
   @PutMapping("{id}")
-  public ResponseEntity<RentalDto> update(@PathVariable("id") String id, @Valid @RequestBody RentalDto rentalDto) {
+  public ResponseEntity<HashMap<
+    MessageResponse, RentalDto>> update(@PathVariable("id") String id, @Valid @RequestBody RentalDto rentalDto) {
     try {
      Rental rental = this.rentalService.update(Long.parseLong(id), this.rentalMapper.toEntity(rentalDto));
-
-      return ResponseEntity.ok().body(this.rentalMapper.toDto(rental));
+      var response = new HashMap<
+        MessageResponse, RentalDto>();
+      response.put(new MessageResponse("Rental updated !"), this.rentalMapper.toDto(rental));
+      return ResponseEntity.ok().body(response);
     } catch (NumberFormatException e) {
       return ResponseEntity.badRequest().build();
     }

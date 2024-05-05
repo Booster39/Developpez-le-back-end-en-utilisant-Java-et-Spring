@@ -48,7 +48,7 @@ public class AuthController {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
 
-        User user = this.userRepository.findById(userDetails.getId()).orElse(null);
+        User user = this.userRepository.findByEmail(userDetails.getUsername()).orElse(null);
 
         return ResponseEntity.ok(new JwtResponse(jwt,
                 userDetails.getId(),
@@ -60,7 +60,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<MessageResponse> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-      if (signUpRequest.getEmail() == null) {
+      if (userRepository.existsByEmail(signUpRequest.getEmail())) {
         return ResponseEntity
           .badRequest()
           .body(new MessageResponse("Error: Email is already taken!"));
