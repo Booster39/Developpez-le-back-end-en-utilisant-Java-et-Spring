@@ -1,10 +1,7 @@
 package com.openclassroom.ChaTop.security.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -14,8 +11,7 @@ import java.util.Objects;
 
 @Builder
 @AllArgsConstructor
-@Setter
-@Getter
+@Data
 public class UserDetailsImpl implements UserDetails {
   private static final long serialVersionUID = 1L;
 

@@ -5,11 +5,12 @@ import com.openclassroom.ChaTop.mapper.RentalMapper;
 import com.openclassroom.ChaTop.models.Rental;
 import com.openclassroom.ChaTop.payload.response.MessageResponse;
 import com.openclassroom.ChaTop.service.RentalService;
-import jakarta.validation.Valid;
+
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 

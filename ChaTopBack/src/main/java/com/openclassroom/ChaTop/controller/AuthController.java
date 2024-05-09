@@ -15,8 +15,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import javax.validation.Valid;
 
-import jakarta.validation.Valid;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -41,7 +44,7 @@ public class AuthController {
     public ResponseEntity<JwtResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+                new UsernamePasswordAuthenticationToken(loginRequest.getLogin(), loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
@@ -76,4 +79,13 @@ public class AuthController {
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
+
+  @GetMapping("/me")
+
+  public ResponseEntity<Optional<User>> me() {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    final Optional<User> user = this.userRepository.findByEmail(auth.getName());
+    //var dateTimeFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH);
+   return  ResponseEntity.ok().body(user);
+  }
 }

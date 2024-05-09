@@ -31,7 +31,7 @@ public class RentalMapper implements EntityMapper<RentalDto, Rental> {
     rental.picture( dto.getPicture() );
     rental.description( dto.getDescription() );
 
-    User owner = userRepository.findById(dto.getOwnerId()).orElse(null);
+    User owner = userRepository.findById(dto.getOwner_id()).orElse(null);
     rental.owner(owner);
 
     return rental.build();
@@ -51,7 +51,8 @@ public class RentalMapper implements EntityMapper<RentalDto, Rental> {
     rentalDto.setPrice( entity.getPrice() );
     rentalDto.setPicture( entity.getPicture() );
     rentalDto.setDescription( entity.getDescription() );
-    rentalDto.setOwnerId(entity.getOwner().getId());
+    rentalDto.setOwner_id(entity.getOwner().getId());
+
 
     return rentalDto;
   }

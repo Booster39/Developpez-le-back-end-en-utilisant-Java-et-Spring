@@ -1,12 +1,14 @@
 package com.openclassroom.ChaTop.payload.request;
 
-import jakarta.validation.constraints.NotBlank;
+
 import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
 
 @Data
 public class LoginRequest {
 	@NotBlank
-  private String email;
+  private String login;
 
 	@NotBlank
 	private String password;

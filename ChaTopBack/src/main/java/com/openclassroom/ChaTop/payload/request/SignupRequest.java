@@ -2,7 +2,12 @@ package com.openclassroom.ChaTop.payload.request;
 
 import lombok.Data;
 
-import jakarta.validation.constraints.*;
+import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class SignupRequest {

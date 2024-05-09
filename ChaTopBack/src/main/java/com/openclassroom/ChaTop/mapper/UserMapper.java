@@ -1,11 +1,14 @@
 package com.openclassroom.ChaTop.mapper;
 
 import com.openclassroom.ChaTop.dto.UserDto;
+import com.openclassroom.ChaTop.models.Message;
+import com.openclassroom.ChaTop.models.Rental;
 import com.openclassroom.ChaTop.models.User;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class UserMapper implements EntityMapper<UserDto, User> {
@@ -21,8 +24,22 @@ public class UserMapper implements EntityMapper<UserDto, User> {
     user.id( dto.getId() );
     user.name( dto.getName() );
     user.email( dto.getEmail() );
-    user.messages(dto.getMessages());
-    user.rentals(dto.getRentals());
+    user.messages(dto.getMessages().stream()
+      .map(messageId -> {
+        Message message = new Message();
+        message.setId(messageId);
+        return message;
+      })
+      .collect(Collectors.toList()));
+    user.rentals(dto.getRentals().stream()
+      .map(rentalId -> {
+        Rental rental = new Rental();
+        rental.setId(rentalId);
+        return rental;
+      })
+      .collect(Collectors.toList()));
+    user.created_at(dto.getCreated_at());
+    user.updated_at(dto.getUpdated_at());
 
     return user.build();
   }
@@ -38,37 +55,39 @@ public class UserMapper implements EntityMapper<UserDto, User> {
     userDto.setId( entity.getId() );
     userDto.setName( entity.getName() );
     userDto.setEmail( entity.getEmail() );
-    userDto.setMessages(entity.getMessages());
-    userDto.setRentals(entity.getRentals());
+    userDto.setMessages(entity.getMessages().stream()
+      .map(Message::getId)
+      .collect(Collectors.toList()));
+    userDto.setRentals(entity.getRentals().stream()
+      .map(Rental::getId)
+      .collect(Collectors.toList()));
+    userDto.setCreated_at(entity.getCreated_at());
+    userDto.setUpdated_at(entity.getUpdated_at());
+
 
     return userDto;
   }
 
+
   @Override
   public List<User> toEntity(List<UserDto> dtoList) {
-    if ( dtoList == null ) {
+    if (dtoList == null) {
       return null;
     }
 
-    List<User> list = new ArrayList<User>( dtoList.size() );
-    for ( UserDto userDto : dtoList ) {
-      list.add( toEntity( userDto ) );
-    }
-
-    return list;
+    return dtoList.stream()
+      .map(this::toEntity)
+      .collect(Collectors.toList());
   }
 
   @Override
   public List<UserDto> toDto(List<User> entityList) {
-    if ( entityList == null ) {
+    if (entityList == null) {
       return null;
     }
 
-    List<UserDto> list = new ArrayList<UserDto>( entityList.size() );
-    for ( User user : entityList ) {
-      list.add( toDto( user ) );
-    }
-
-    return list;
+    return entityList.stream()
+      .map(this::toDto)
+      .collect(Collectors.toList());
   }
 }

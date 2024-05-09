@@ -1,17 +1,14 @@
 package com.openclassroom.ChaTop.dto;
 
-import com.openclassroom.ChaTop.models.Message;
-import com.openclassroom.ChaTop.models.Rental;
-import jakarta.persistence.OneToMany;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Size;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -28,9 +25,10 @@ public class UserDto {
   @Size(max = 255)
   private String name;
 
-  @OneToMany(mappedBy = "user")
-  private List<Message> messages;
+  private List<Long> messages;
 
-  @OneToMany(mappedBy = "owner")
-  private List<Rental> rentals;
+  private List<Long> rentals;
+
+  private LocalDateTime created_at;
+  private LocalDateTime updated_at;
 }

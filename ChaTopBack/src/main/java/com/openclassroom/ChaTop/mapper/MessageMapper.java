@@ -31,10 +31,10 @@ public class MessageMapper implements EntityMapper<MessageDto, Message> {
     message.id( dto.getId() );
     message.message( dto.getMessage() );
 
-    User user = userRepository.findById(dto.getUserId()).orElse(null);
+    User user = userRepository.findById(dto.getUser_id()).orElse(null);
     message.user(user);
 
-    Rental rental = rentalRepository.findById(dto.getRentalId()).orElse(null);
+    Rental rental = rentalRepository.findById(dto.getRental_id()).orElse(null);
     message.rental(rental);
 
     return message.build();
@@ -50,8 +50,8 @@ public class MessageMapper implements EntityMapper<MessageDto, Message> {
 
     messageDto.setId( entity.getId() );
     messageDto.setMessage( entity.getMessage() );
-    messageDto.setRentalId(entity.getRental().getId());
-    messageDto.setUserId(entity.getUser().getId());
+    messageDto.setRental_id(entity.getRental().getId());
+    messageDto.setUser_id(entity.getUser().getId());
 
     return messageDto;
   }

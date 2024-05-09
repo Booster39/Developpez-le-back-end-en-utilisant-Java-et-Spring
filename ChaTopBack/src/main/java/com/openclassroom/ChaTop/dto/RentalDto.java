@@ -1,14 +1,17 @@
 package com.openclassroom.ChaTop.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
+
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+
 
 @Data
 @NoArgsConstructor
@@ -20,7 +23,7 @@ public class RentalDto {
   @Size(max = 255)
   private String name;
 
-  private Long ownerId;
+  private Long owner_id;
 
   private BigDecimal surface;
 
@@ -33,4 +36,7 @@ public class RentalDto {
   @NonNull
   @Size(max = 2000)
   private String description;
+
+  private LocalDateTime created_at;
+  private LocalDateTime updated_at;
 }
