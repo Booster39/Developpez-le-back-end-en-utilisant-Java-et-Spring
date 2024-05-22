@@ -37,9 +37,9 @@ public class Rental {
     @Size(max = 255)
     private String name;
 
-    private BigDecimal surface;
+    private float surface;
 
-    private BigDecimal price;
+    private float price;
 
     @NonNull
     @Size(max = 255)
@@ -50,7 +50,7 @@ public class Rental {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "owner_id", nullable = false)
+    @JoinColumn(name = "owner_id", referencedColumnName = "id", nullable = false)
     private User owner;
 
     @CreatedDate
@@ -58,6 +58,6 @@ public class Rental {
     private LocalDateTime created_at;
 
     @UpdateTimestamp
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", length = 8)
     private LocalDateTime updated_at;
 }

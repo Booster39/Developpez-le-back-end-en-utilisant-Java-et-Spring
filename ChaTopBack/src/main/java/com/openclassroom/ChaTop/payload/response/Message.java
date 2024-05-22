@@ -1,0 +1,10 @@
+package com.openclassroom.ChaTop.payload.response;
+
+import lombok.Data;
+
+@Data
+public class Message {
+  private String message;
+
+  public Message(String message) {this.message = message;}
+}

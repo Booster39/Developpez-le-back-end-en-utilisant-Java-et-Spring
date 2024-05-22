@@ -27,15 +27,15 @@ public class Message {
 
     @NonNull
     @Size(max = 2000)
-    @Column(name = "message")
+    @Column(name = "message", insertable = true)
     private String message;
 
     @ManyToOne
-    @JoinColumn(name = "rental_id")
+    @JoinColumn(name = "rental_id", referencedColumnName = "id")
     private Rental rental;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name="user_id",referencedColumnName = "id")
     private User user;
 
     @CreatedDate
@@ -43,7 +43,7 @@ public class Message {
     private LocalDateTime created_at;
 
     @UpdateTimestamp
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", length = 8)
     private LocalDateTime updated_at;
 
 }

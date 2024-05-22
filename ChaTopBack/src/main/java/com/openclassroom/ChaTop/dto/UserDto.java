@@ -25,10 +25,6 @@ public class UserDto {
   @Size(max = 255)
   private String name;
 
-  private List<Long> messages;
-
-  private List<Long> rentals;
-
   private LocalDateTime created_at;
   private LocalDateTime updated_at;
 }

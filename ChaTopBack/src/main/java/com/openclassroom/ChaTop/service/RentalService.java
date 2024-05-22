@@ -3,8 +3,12 @@ package com.openclassroom.ChaTop.service;
 import com.openclassroom.ChaTop.models.Rental;
 import com.openclassroom.ChaTop.repository.RentalRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class RentalService {
@@ -27,4 +31,5 @@ public class RentalService {
     rental.setId(id);
     return this.rentalRepository.save(rental);
   }
+
 }

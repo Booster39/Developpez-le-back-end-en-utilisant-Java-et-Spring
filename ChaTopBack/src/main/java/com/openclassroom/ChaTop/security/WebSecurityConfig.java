@@ -68,15 +68,6 @@ public class WebSecurityConfig {
     return http.build();
   }
 
-  @Bean
-  public InMemoryUserDetailsManager userDetailsService() {
-    UserDetails user = User.withDefaultPasswordEncoder()
-      .username("test@test.com")
-      .password("test!31")
-      .roles("USER")
-      .build();
-    return new InMemoryUserDetailsManager(user);
-  }
   private AuthenticationProvider authenticationProvider() {
     final DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
     authenticationProvider.setUserDetailsService(userDetailsService);

@@ -44,17 +44,12 @@ public class User {
     @Size(max = 255)
     private String password;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Message> messages;
-
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Rental> rentals;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime created_at;
 
     @UpdateTimestamp
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", length = 8)
     private LocalDateTime updated_at;
 }

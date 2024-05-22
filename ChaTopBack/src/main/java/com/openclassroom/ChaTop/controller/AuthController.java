@@ -1,5 +1,7 @@
 package com.openclassroom.ChaTop.controller;
 
+import com.openclassroom.ChaTop.dto.UserDto;
+import com.openclassroom.ChaTop.mapper.UserMapper;
 import com.openclassroom.ChaTop.models.User;
 import com.openclassroom.ChaTop.payload.request.LoginRequest;
 import com.openclassroom.ChaTop.payload.request.SignupRequest;
@@ -17,8 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -29,19 +29,21 @@ public class AuthController {
     private final JwtUtils jwtUtils;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     AuthController(AuthenticationManager authenticationManager,
                    PasswordEncoder passwordEncoder,
                    JwtUtils jwtUtils,
-                   UserRepository userRepository) {
+                   UserRepository userRepository, UserMapper userMapper) {
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getLogin(), loginRequest.getPassword()));
@@ -49,43 +51,32 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-
-
-        User user = this.userRepository.findByEmail(userDetails.getUsername()).orElse(null);
-
-        return ResponseEntity.ok(new JwtResponse(jwt,
-                userDetails.getId(),
-          userDetails.getUsername(),
-          userDetails.getName(),
-          userDetails.getEmail()
-          ));
+        User user = this.userRepository.findByEmail(userDetails.getEmail()).orElse(null);
+        if (user == null) {
+          return ResponseEntity.badRequest().body(new MessageResponse("error" ));
+        }
+        return ResponseEntity.ok(new JwtResponse(jwt));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<MessageResponse> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
       if (userRepository.existsByEmail(signUpRequest.getEmail())) {
         return ResponseEntity
-          .badRequest()
-          .body(new MessageResponse("Error: Email is already taken!"));
+          .badRequest().body("{}");
       }
-
       // Create new user's account
         User user = new User(signUpRequest.getEmail(),
                 signUpRequest.getName(),
                 passwordEncoder.encode(signUpRequest.getPassword())
                 );
-
         userRepository.save(user);
-
-        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+        return ResponseEntity.ok(new JwtResponse(jwtUtils.generateToken(user.getEmail())));
     }
 
   @GetMapping("/me")
-
-  public ResponseEntity<Optional<User>> me() {
+  public ResponseEntity<Optional<UserDto>> me() {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-    final Optional<User> user = this.userRepository.findByEmail(auth.getName());
-    //var dateTimeFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH);
-   return  ResponseEntity.ok().body(user);
+   final Optional<User> user = this.userRepository.findByEmail(auth.getName());
+   return  ResponseEntity.ok().body(user.map(this.userMapper::toDto));
   }
 }

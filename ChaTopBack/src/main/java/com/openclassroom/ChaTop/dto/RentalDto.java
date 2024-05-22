@@ -5,10 +5,14 @@ import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 
+import com.openclassroom.ChaTop.models.Rental;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
@@ -23,11 +27,9 @@ public class RentalDto {
   @Size(max = 255)
   private String name;
 
-  private Long owner_id;
+  private float surface;
 
-  private BigDecimal surface;
-
-  private BigDecimal price;
+  private float price;
 
   @NonNull
   @Size(max = 255)
@@ -37,6 +39,9 @@ public class RentalDto {
   @Size(max = 2000)
   private String description;
 
+  private Long owner_id;
+
   private LocalDateTime created_at;
   private LocalDateTime updated_at;
+
 }

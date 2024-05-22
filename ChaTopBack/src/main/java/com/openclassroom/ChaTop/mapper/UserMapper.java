@@ -24,20 +24,6 @@ public class UserMapper implements EntityMapper<UserDto, User> {
     user.id( dto.getId() );
     user.name( dto.getName() );
     user.email( dto.getEmail() );
-    user.messages(dto.getMessages().stream()
-      .map(messageId -> {
-        Message message = new Message();
-        message.setId(messageId);
-        return message;
-      })
-      .collect(Collectors.toList()));
-    user.rentals(dto.getRentals().stream()
-      .map(rentalId -> {
-        Rental rental = new Rental();
-        rental.setId(rentalId);
-        return rental;
-      })
-      .collect(Collectors.toList()));
     user.created_at(dto.getCreated_at());
     user.updated_at(dto.getUpdated_at());
 
@@ -55,12 +41,6 @@ public class UserMapper implements EntityMapper<UserDto, User> {
     userDto.setId( entity.getId() );
     userDto.setName( entity.getName() );
     userDto.setEmail( entity.getEmail() );
-    userDto.setMessages(entity.getMessages().stream()
-      .map(Message::getId)
-      .collect(Collectors.toList()));
-    userDto.setRentals(entity.getRentals().stream()
-      .map(Rental::getId)
-      .collect(Collectors.toList()));
     userDto.setCreated_at(entity.getCreated_at());
     userDto.setUpdated_at(entity.getUpdated_at());
 
