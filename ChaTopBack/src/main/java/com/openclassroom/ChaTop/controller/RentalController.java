@@ -51,16 +51,32 @@ public class RentalController {
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<HashMap<String, List<RentalDto>>> findAll() {
-   List<Rental> rentals =this.rentalService.findAll();
+    List<Rental> rentals = this.rentalService.findAll();
     var response = new HashMap<String, List<RentalDto>>();
     response.put("rentals", this.rentalMapper.toDto(rentals));
     return ResponseEntity.ok().body(response);
 
   }
 
-  @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public RentalDto createRental(
+  @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<RentalDto> findById(@PathVariable("id") String id) {
+    try {
+      Rental rental = this.rentalService.findById(Long.valueOf(id));
+
+      if (rental == null) {
+        return ResponseEntity.notFound().build();
+      }
+      return ResponseEntity.ok().body(this.rentalMapper.toDto(rental));
+    } catch (NumberFormatException e) {
+      return ResponseEntity.badRequest().build();
+    }
+  }
+
+
+  @PostMapping(value = "/{id}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  public RentalDto create(
     //@formatter:off
+    @PathVariable("id") String id,
     @RequestPart("picture") MultipartFile multipartFile,
     @RequestParam("name") @NotBlank @Size(max=63) String name,
     @RequestParam("surface") @Min(0) float surface,
@@ -79,6 +95,7 @@ public class RentalController {
     String formattedDateString = owner.getCreated_at().format(dateTimeFormatter);
 
     Rental candidate = Rental.builder()
+      .id(Long.valueOf(id))
       .owner(owner)
       .name(name)
       .surface(surface)
@@ -91,32 +108,40 @@ public class RentalController {
     return rentalMapper.toDto(savedRental);
   }
 
-  @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<RentalDto> findById(@PathVariable("id") String id) {
+  @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<HashMap<MessageResponse, RentalDto>> update(
+    @PathVariable("id") String id,
+    @RequestParam("name") @NotBlank @Size(max = 63) String name,
+    @RequestParam("surface") @Min(0) float surface,
+    @RequestParam("price") @Min(0) float price,
+    @RequestParam("description") @Size(max = 2000) String description,
+    @RequestHeader(value = "Authorization", required = false) String jwt
+  ) {
     try {
-      Rental rental = this.rentalService.findById(Long.valueOf(id));
-
-      if (rental == null) {
+      Rental existingRental = this.rentalService.findById(Long.parseLong(id));
+      if (existingRental == null) {
         return ResponseEntity.notFound().build();
       }
-      return ResponseEntity.ok().body(this.rentalMapper.toDto(rental));
-    } catch (NumberFormatException e) {
-      return ResponseEntity.badRequest().build();
-    }
-  }
 
-  @PutMapping(value = "{id}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<HashMap<
-    MessageResponse, RentalDto>> update(@PathVariable("id") String id, @Valid @RequestBody RentalDto rentalDto) {
-    try {
-     Rental rental = this.rentalService.update(Long.parseLong(id), this.rentalMapper.toEntity(rentalDto));
-      var response = new HashMap<
-        MessageResponse, RentalDto>();
-      response.put(new MessageResponse("Rental updated !"), this.rentalMapper.toDto(rental));
+      String username = jwtUtils.getUserNameFromJwtToken(jwt.substring(7));
+      User owner = this.userRepository.findByEmail(username)
+        .orElseThrow(() -> new RuntimeException("User not found"));
+
+      existingRental.setName(name);
+      existingRental.setSurface(surface);
+      existingRental.setPrice(price);
+      existingRental.setDescription(description);
+      existingRental.setOwner(owner);
+
+      Rental updatedRental = this.rentalRepository.save(existingRental);
+
+      var response = new HashMap<MessageResponse, RentalDto>();
+      response.put(new MessageResponse("Rental updated!"), this.rentalMapper.toDto(updatedRental));
       return ResponseEntity.ok().body(response);
     } catch (NumberFormatException e) {
       return ResponseEntity.badRequest().build();
     }
   }
+
 
 }

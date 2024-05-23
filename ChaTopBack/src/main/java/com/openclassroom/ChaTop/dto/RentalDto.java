@@ -41,6 +41,8 @@ public class RentalDto {
 
   private Long owner_id;
 
+  private String jwt;
+
   private LocalDateTime created_at;
   private LocalDateTime updated_at;
 
