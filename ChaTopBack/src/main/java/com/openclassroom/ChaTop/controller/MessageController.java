@@ -15,6 +15,7 @@ import com.openclassroom.ChaTop.service.MessageService;
 import com.openclassroom.ChaTop.service.RentalService;
 import com.openclassroom.ChaTop.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,15 +34,13 @@ import java.util.Objects;
 @RequestMapping("/api/messages")
 @Log4j2
 public class MessageController {
-  private final MessageRepository messageRepository;
-  private final UserRepository userRepository;
-  private final RentalRepository rentalRepository;
+  @Autowired
+  private  MessageRepository messageRepository;
+  @Autowired
+  private UserRepository userRepository;
+  @Autowired
+  private RentalRepository rentalRepository;
 
-  public MessageController( UserRepository userRepository, RentalRepository rentalRepository, MessageRepository messageRepository) {
-    this.userRepository = userRepository;
-    this.rentalRepository = rentalRepository;
-    this.messageRepository = messageRepository;
-  }
 
   @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> create(@Valid @RequestBody MessageResponse messageResponse) {

@@ -17,11 +17,10 @@ public class UserDetailsImpl implements UserDetails {
 
   private Long id;
 
-  private String username;
+  private String username;//email
 
   private String name;
 
-  private String email;
 
   @JsonIgnore
   private String password;

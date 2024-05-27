@@ -5,6 +5,7 @@ import com.openclassroom.ChaTop.mapper.UserMapper;
 import com.openclassroom.ChaTop.models.User;
 import com.openclassroom.ChaTop.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +20,11 @@ import java.util.Locale;
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
-  private final UserService userService;
-  private final UserMapper userMapper;
+  @Autowired
+  private UserService userService;
+  @Autowired
+  private UserMapper userMapper;
 
-  public UserController(UserService userService, UserMapper userMapper) {
-    this.userService = userService;
-    this.userMapper = userMapper;
-  }
   @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<UserDto> findById(@PathVariable("id") String id) {
     try {

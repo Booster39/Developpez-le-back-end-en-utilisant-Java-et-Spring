@@ -10,6 +10,8 @@ import com.openclassroom.ChaTop.payload.response.MessageResponse;
 import com.openclassroom.ChaTop.repository.UserRepository;
 import com.openclassroom.ChaTop.security.jwt.JwtUtils;
 import com.openclassroom.ChaTop.security.services.UserDetailsImpl;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,22 +27,17 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-    private final AuthenticationManager authenticationManager;
-    private final JwtUtils jwtUtils;
-    private final PasswordEncoder passwordEncoder;
-    private final UserRepository userRepository;
-    private final UserMapper userMapper;
+  @Autowired
+    private AuthenticationManager authenticationManager;
+  @Autowired
+    private JwtUtils jwtUtils;
+  @Autowired
+    private PasswordEncoder passwordEncoder;
+  @Autowired
+    private UserRepository userRepository;
+  @Autowired
+    private UserMapper userMapper;
 
-    AuthController(AuthenticationManager authenticationManager,
-                   PasswordEncoder passwordEncoder,
-                   JwtUtils jwtUtils,
-                   UserRepository userRepository, UserMapper userMapper) {
-        this.authenticationManager = authenticationManager;
-        this.jwtUtils = jwtUtils;
-        this.passwordEncoder = passwordEncoder;
-        this.userRepository = userRepository;
-        this.userMapper = userMapper;
-    }
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -51,7 +48,7 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        User user = this.userRepository.findByEmail(userDetails.getEmail()).orElse(null);
+        User user = this.userRepository.findByEmail(userDetails.getUsername()).orElse(null);
         if (user == null) {
           return ResponseEntity.badRequest().body(new MessageResponse("error" ));
         }
@@ -65,15 +62,17 @@ public class AuthController {
           .badRequest().body("{}");
       }
       // Create new user's account
-        User user = new User(signUpRequest.getEmail(),
-                signUpRequest.getName(),
-                passwordEncoder.encode(signUpRequest.getPassword())
-                );
+        User user = new User(
+          signUpRequest.getEmail(),
+          signUpRequest.getName(),
+          passwordEncoder.encode(signUpRequest.getPassword())
+        );
         userRepository.save(user);
-        return ResponseEntity.ok(new JwtResponse(jwtUtils.generateToken(user.getEmail())));
+        return ResponseEntity.ok(new JwtResponse(jwtUtils.generateJwtToken(user.getEmail())));
     }
 
   @GetMapping("/me")
+  @SecurityRequirement(name = "Bearer Authentication")
   public ResponseEntity<Optional<UserDto>> me() {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
    final Optional<User> user = this.userRepository.findByEmail(auth.getName());

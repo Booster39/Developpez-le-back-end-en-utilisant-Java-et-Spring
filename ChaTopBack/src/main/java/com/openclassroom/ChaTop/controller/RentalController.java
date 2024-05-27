@@ -13,6 +13,7 @@ import com.openclassroom.ChaTop.service.RentalService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,22 +32,21 @@ import java.util.Locale;
 @RequestMapping("/api/rentals")
 @Log4j2
 public class RentalController {
-  private final RentalMapper rentalMapper;
-  private final RentalService rentalService;
-  private final JwtUtils jwtUtils;
-  private final UserRepository userRepository;
-  private final RentalRepository rentalRepository;
+  @Autowired
+  private  RentalMapper rentalMapper;
+  @Autowired
+  private RentalService rentalService;
+  @Autowired
+  private JwtUtils jwtUtils;
+  @Autowired
+  private UserRepository userRepository;
+  @Autowired
+  private RentalRepository rentalRepository;
 
   private final FileStorageService fileStorageService;
 
-  public RentalController(RentalMapper rentalMapper, RentalService rentalService, JwtUtils jwtUtils, UserRepository userRepository, FileStorageService fileStorageService,
-                          RentalRepository rentalRepository) {
-    this.rentalMapper = rentalMapper;
-    this.rentalService = rentalService;
-    this.jwtUtils = jwtUtils;
-    this.userRepository = userRepository;
+  public RentalController( FileStorageService fileStorageService) {
     this.fileStorageService = fileStorageService;
-    this.rentalRepository = rentalRepository;
   }
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
