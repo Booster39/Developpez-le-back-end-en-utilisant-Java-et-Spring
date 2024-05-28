@@ -2,7 +2,7 @@ package com.openclassroom.ChaTop.mapper;
 
 import com.openclassroom.ChaTop.dto.RentalDto;
 import com.openclassroom.ChaTop.models.Rental;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.stream.Collectors;
 

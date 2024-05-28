@@ -8,10 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-
 
 @Component
 public class JwtUtils {
@@ -26,10 +22,8 @@ public class JwtUtils {
   public String generateJwtToken(Authentication authentication) {
 
     UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
-    Map<String, Object> claims = new HashMap<>();
     return Jwts.builder()
       .setSubject((userPrincipal.getUsername()))
-     // .setClaims(claims)
       .setIssuedAt(new Date())
       .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
       .signWith(SignatureAlgorithm.HS512, jwtSecret)
@@ -37,10 +31,8 @@ public class JwtUtils {
   }
 
   public String generateJwtToken(String email) {
-    Map<String, Object> claims = new HashMap<>();
     return Jwts.builder()
       .setSubject((email))
-     // .setClaims(claims)
       .setIssuedAt(new Date())
       .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
       .signWith(SignatureAlgorithm.HS512, jwtSecret)

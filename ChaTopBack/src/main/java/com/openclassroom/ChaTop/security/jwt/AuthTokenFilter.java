@@ -1,7 +1,6 @@
 package com.openclassroom.ChaTop.security.jwt;
 
 import com.openclassroom.ChaTop.security.services.UserDetailsServiceImpl;
-import io.jsonwebtoken.Claims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
+
 
 
 public class AuthTokenFilter extends OncePerRequestFilter {
@@ -37,7 +36,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
       String jwt = parseJwt(request);
       if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
         String username = jwtUtils.getUserNameFromJwtToken(jwt);
-        logger.info("username is null ?: {}", username);
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         UsernamePasswordAuthenticationToken authentication =
           new UsernamePasswordAuthenticationToken(

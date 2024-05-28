@@ -4,7 +4,6 @@ import com.openclassroom.ChaTop.dto.RentalDto;
 import com.openclassroom.ChaTop.mapper.RentalMapper;
 import com.openclassroom.ChaTop.models.Rental;
 import com.openclassroom.ChaTop.models.User;
-import com.openclassroom.ChaTop.payload.response.MessageResponse;
 import com.openclassroom.ChaTop.payload.response.StringResponse;
 import com.openclassroom.ChaTop.repository.RentalRepository;
 import com.openclassroom.ChaTop.repository.UserRepository;
@@ -12,7 +11,6 @@ import com.openclassroom.ChaTop.security.jwt.JwtUtils;
 import com.openclassroom.ChaTop.service.FileStorageService;
 import com.openclassroom.ChaTop.service.RentalService;
 
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -52,11 +50,15 @@ public class RentalController {
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<HashMap<String, List<RentalDto>>> findAll() {
+    try {
     List<Rental> rentals = this.rentalService.findAll();
     var response = new HashMap<String, List<RentalDto>>();
     response.put("rentals", this.rentalMapper.toDto(rentals));
     return ResponseEntity.ok().body(response);
-
+    } catch (Exception e)
+    {
+      return ResponseEntity.badRequest().build();
+    }
   }
 
   @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -68,14 +70,14 @@ public class RentalController {
         return ResponseEntity.notFound().build();
       }
       return ResponseEntity.ok().body(this.rentalMapper.toDto(rental));
-    } catch (NumberFormatException e) {
+    } catch (Exception e) {
       return ResponseEntity.badRequest().build();
     }
   }
 
 
   @PostMapping(value = "/{id}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public RentalDto create(
+  public ResponseEntity<StringResponse> create(
     //@formatter:off
     @PathVariable("id") String id,
     @RequestPart("picture") MultipartFile multipartFile,
@@ -86,32 +88,38 @@ public class RentalController {
     @RequestHeader(value="Authorization",required = false) String jwt
     //@formatter:on
   ) {
-    String username = jwtUtils.getUserNameFromJwtToken(jwt.substring(7));
-    User owner = this.userRepository.findByEmail(username)
-      .orElseThrow(() -> new RuntimeException("User not found"));
-    String picturePath = fileStorageService.savePicture(multipartFile);
-    var dateTimeFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH);
+    try {
+      String username = jwtUtils.getUserNameFromJwtToken(jwt.substring(7));
+      User owner = this.userRepository.findByEmail(username)
+        .orElseThrow(() -> new RuntimeException("User not found"));
+      String picturePath = fileStorageService.savePicture(multipartFile);
+      var dateTimeFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH);
 
-    // Format the LocalDate to a string
-    String formattedDateString = owner.getCreated_at().format(dateTimeFormatter);
+      // Format the LocalDate to a string
+      String formattedDateString = owner.getCreated_at().format(dateTimeFormatter);
 
-    Rental candidate = Rental.builder()
-      .id(Long.valueOf(id))
-      .owner(owner)
-      .name(name)
-      .surface(surface)
-      .price(price)
-      .description(description)
-      .picture(picturePath)
-      .created_at(owner.getCreated_at())
-      .build();
+      Rental candidate = Rental.builder()
+        .id(Long.valueOf(id))
+        .owner(owner)
+        .name(name)
+        .surface(surface)
+        .price(price)
+        .description(description)
+        .picture(picturePath)
+        .created_at(owner.getCreated_at())
+        .build();
 
-    Rental savedRental = rentalRepository.save(candidate);
-    return rentalMapper.toDto(savedRental);
+      this.rentalRepository.save(candidate);
+      return ResponseEntity.ok().body(new StringResponse("Rental created !"));
+    }  catch (Exception e)
+  {
+    return ResponseEntity.badRequest().build();
+  }
   }
 
+
   @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<HashMap<StringResponse, RentalDto>> update(
+  public ResponseEntity<?> update(
     @PathVariable("id") String id,
     @RequestParam("name") @NotBlank @Size(max = 63) String name,
     @RequestParam("surface") @Min(0) float surface,
@@ -137,12 +145,9 @@ public class RentalController {
       existingRental.setDescription(description);
       existingRental.setCreated_at(owner.getCreated_at());
 
-      Rental updatedRental = this.rentalRepository.save(existingRental);
-
-      var response = new HashMap<StringResponse, RentalDto>();
-      response.put(new StringResponse("Rental updated!"), this.rentalMapper.toDto(updatedRental));
-      return ResponseEntity.ok().body(response);
-    } catch (NumberFormatException e) {
+      this.rentalRepository.save(existingRental);
+      return ResponseEntity.ok().body(new StringResponse("Rental updated !"));
+    } catch (Exception e) {
       return ResponseEntity.badRequest().build();
     }
   }

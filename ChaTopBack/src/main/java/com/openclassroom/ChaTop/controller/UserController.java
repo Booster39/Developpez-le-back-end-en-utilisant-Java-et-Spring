@@ -4,9 +4,8 @@ import com.openclassroom.ChaTop.dto.UserDto;
 import com.openclassroom.ChaTop.mapper.UserMapper;
 import com.openclassroom.ChaTop.models.User;
 import com.openclassroom.ChaTop.service.UserService;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,7 +32,6 @@ public class UserController {
       if (user == null) {
         return ResponseEntity.notFound().build();
       }
-    /*  return ResponseEntity.ok().body(this.userMapper.toDto(user));*/
       var dateTimeFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH);
 
       // Format the LocalDate to a string
@@ -46,7 +44,7 @@ public class UserController {
         .created_at(user.getCreated_at())
         .build();
       return ResponseEntity.ok().body(this.userMapper.toDto(userDto));
-    } catch (NumberFormatException e) {
+    } catch (Exception e) {
       return ResponseEntity.badRequest().build();
     }
   }

@@ -6,7 +6,6 @@ import com.openclassroom.ChaTop.models.User;
 import com.openclassroom.ChaTop.payload.request.LoginRequest;
 import com.openclassroom.ChaTop.payload.request.SignupRequest;
 import com.openclassroom.ChaTop.payload.response.JwtResponse;
-import com.openclassroom.ChaTop.payload.response.MessageResponse;
 import com.openclassroom.ChaTop.payload.response.StringResponse;
 import com.openclassroom.ChaTop.repository.UserRepository;
 import com.openclassroom.ChaTop.security.jwt.JwtUtils;
@@ -42,7 +41,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-
+      try {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getLogin(), loginRequest.getPassword()));
 
@@ -54,10 +53,15 @@ public class AuthController {
           return ResponseEntity.badRequest().body(new StringResponse("error" ));
         }
         return ResponseEntity.ok(new JwtResponse(jwt));
+      } catch (Exception e)
+      {
+        return ResponseEntity.badRequest().build();
+      }
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+      try {
       if (userRepository.existsByEmail(signUpRequest.getEmail())) {
         return ResponseEntity
           .badRequest().body("{}");
@@ -70,13 +74,22 @@ public class AuthController {
         );
         userRepository.save(user);
         return ResponseEntity.ok(new JwtResponse(jwtUtils.generateJwtToken(user.getEmail())));
+      } catch (Exception e)
+      {
+        return ResponseEntity.badRequest().build();
+      }
     }
 
   @GetMapping("/me")
   @SecurityRequirement(name = "Bearer Authentication")
   public ResponseEntity<Optional<UserDto>> me() {
+      try {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
    final Optional<User> user = this.userRepository.findByEmail(auth.getName());
    return  ResponseEntity.ok().body(user.map(this.userMapper::toDto));
+      } catch (Exception e)
+      {
+        return ResponseEntity.badRequest().build();
+      }
   }
 }

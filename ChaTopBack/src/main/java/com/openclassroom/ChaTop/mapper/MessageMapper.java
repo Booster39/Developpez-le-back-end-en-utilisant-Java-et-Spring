@@ -2,7 +2,6 @@ package com.openclassroom.ChaTop.mapper;
 
 import com.openclassroom.ChaTop.dto.MessageDto;
 import com.openclassroom.ChaTop.models.Message;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

@@ -68,7 +68,6 @@ public class WebSecurityConfig {
         .anyRequest().authenticated())
       .exceptionHandling(exception -> exception
         .authenticationEntryPoint(authEntryPointJwt));
-       // .accessDeniedHandler(accessDeniedHandler()));
 
     return http.build();
   }

@@ -1,8 +1,7 @@
 package com.openclassroom.ChaTop.payload.response;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+
 
 @Data
 public class MessageResponse {
@@ -15,10 +14,5 @@ public class MessageResponse {
     this.message = message;
     this.rental_id = rental_id;
     this.user_id = user_id;
-  }
-
-  public MessageResponse(String message)
-  {
-    this.message = message;
   }
 }
