@@ -4,6 +4,7 @@ import com.openclassroom.ChaTop.dto.MessageDto;
 import com.openclassroom.ChaTop.models.Message;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.openclassroom.ChaTop.models.Rental;
 import com.openclassroom.ChaTop.models.User;
@@ -36,6 +37,10 @@ public class MessageMapper implements EntityMapper<MessageDto, Message> {
     Rental rental = rentalRepository.findById(dto.getRental_id()).orElse(null);
     message.rental(rental);
 
+    message.id(dto.getId());
+    message.created_at(dto.getCreated_at());
+    message.updated_at(dto.getUpdated_at());
+
     return message.build();
   }
 
@@ -49,12 +54,11 @@ public class MessageMapper implements EntityMapper<MessageDto, Message> {
 
 
     messageDto.setMessage( entity.getMessage() );
-    if (entity.getRental() != null) {
-      messageDto.setRental_id(entity.getRental().getId());
-    } else {
-      messageDto.setRental_id(null);
-    }
+    messageDto.setRental_id(entity.getRental().getId());
     messageDto.setUser_id(entity.getUser().getId());
+    messageDto.setId(entity.getId());
+    messageDto.setCreated_at(entity.getCreated_at());
+    messageDto.setUpdated_at(entity.getUpdated_at());
 
     return messageDto;
   }
@@ -65,12 +69,9 @@ public class MessageMapper implements EntityMapper<MessageDto, Message> {
       return null;
     }
 
-    List<Message> list = new ArrayList<Message>( dtoList.size() );
-    for ( MessageDto messageDto : dtoList ) {
-      list.add( toEntity( messageDto ) );
-    }
-
-    return list;
+    return dtoList.stream()
+      .map(this::toEntity)
+      .collect(Collectors.toList());
   }
 
   @Override
@@ -79,11 +80,8 @@ public class MessageMapper implements EntityMapper<MessageDto, Message> {
       return null;
     }
 
-    List<MessageDto> list = new ArrayList<MessageDto>( entityList.size() );
-    for ( Message message : entityList ) {
-      list.add( toDto( message ) );
-    }
-
-    return list;
+    return entityList.stream()
+      .map(this::toDto)
+      .collect(Collectors.toList());
   }
 }

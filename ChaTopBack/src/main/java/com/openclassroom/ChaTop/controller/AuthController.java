@@ -7,6 +7,7 @@ import com.openclassroom.ChaTop.payload.request.LoginRequest;
 import com.openclassroom.ChaTop.payload.request.SignupRequest;
 import com.openclassroom.ChaTop.payload.response.JwtResponse;
 import com.openclassroom.ChaTop.payload.response.MessageResponse;
+import com.openclassroom.ChaTop.payload.response.StringResponse;
 import com.openclassroom.ChaTop.repository.UserRepository;
 import com.openclassroom.ChaTop.security.jwt.JwtUtils;
 import com.openclassroom.ChaTop.security.services.UserDetailsImpl;
@@ -50,7 +51,7 @@ public class AuthController {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         User user = this.userRepository.findByEmail(userDetails.getUsername()).orElse(null);
         if (user == null) {
-          return ResponseEntity.badRequest().body(new MessageResponse("error" ));
+          return ResponseEntity.badRequest().body(new StringResponse("error" ));
         }
         return ResponseEntity.ok(new JwtResponse(jwt));
     }

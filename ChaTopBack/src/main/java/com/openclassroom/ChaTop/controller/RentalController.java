@@ -5,6 +5,7 @@ import com.openclassroom.ChaTop.mapper.RentalMapper;
 import com.openclassroom.ChaTop.models.Rental;
 import com.openclassroom.ChaTop.models.User;
 import com.openclassroom.ChaTop.payload.response.MessageResponse;
+import com.openclassroom.ChaTop.payload.response.StringResponse;
 import com.openclassroom.ChaTop.repository.RentalRepository;
 import com.openclassroom.ChaTop.repository.UserRepository;
 import com.openclassroom.ChaTop.security.jwt.JwtUtils;
@@ -102,6 +103,7 @@ public class RentalController {
       .price(price)
       .description(description)
       .picture(picturePath)
+      .created_at(owner.getCreated_at())
       .build();
 
     Rental savedRental = rentalRepository.save(candidate);
@@ -109,7 +111,7 @@ public class RentalController {
   }
 
   @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<HashMap<MessageResponse, RentalDto>> update(
+  public ResponseEntity<HashMap<StringResponse, RentalDto>> update(
     @PathVariable("id") String id,
     @RequestParam("name") @NotBlank @Size(max = 63) String name,
     @RequestParam("surface") @Min(0) float surface,
@@ -127,16 +129,18 @@ public class RentalController {
       User owner = this.userRepository.findByEmail(username)
         .orElseThrow(() -> new RuntimeException("User not found"));
 
+      existingRental.setId(Long.valueOf(id));
       existingRental.setName(name);
+      existingRental.setOwner(owner);
       existingRental.setSurface(surface);
       existingRental.setPrice(price);
       existingRental.setDescription(description);
-      existingRental.setOwner(owner);
+      existingRental.setCreated_at(owner.getCreated_at());
 
       Rental updatedRental = this.rentalRepository.save(existingRental);
 
-      var response = new HashMap<MessageResponse, RentalDto>();
-      response.put(new MessageResponse("Rental updated!"), this.rentalMapper.toDto(updatedRental));
+      var response = new HashMap<StringResponse, RentalDto>();
+      response.put(new StringResponse("Rental updated!"), this.rentalMapper.toDto(updatedRental));
       return ResponseEntity.ok().body(response);
     } catch (NumberFormatException e) {
       return ResponseEntity.badRequest().build();

@@ -3,8 +3,11 @@ package com.openclassroom.ChaTop.payload.response;
 import lombok.Data;
 
 @Data
-public class Message {
+public class StringResponse {
   private String message;
 
-  public Message(String message) {this.message = message;}
+  public StringResponse(String message)
+  {
+    this.message = message;
+  }
 }

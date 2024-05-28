@@ -7,6 +7,7 @@ import com.openclassroom.ChaTop.models.Message;
 import com.openclassroom.ChaTop.models.Rental;
 import com.openclassroom.ChaTop.models.User;
 import com.openclassroom.ChaTop.payload.response.MessageResponse;
+import com.openclassroom.ChaTop.payload.response.StringResponse;
 import com.openclassroom.ChaTop.repository.MessageRepository;
 import com.openclassroom.ChaTop.repository.RentalRepository;
 import com.openclassroom.ChaTop.repository.UserRepository;
@@ -42,22 +43,17 @@ public class MessageController {
   private RentalRepository rentalRepository;
 
 
-  @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> create(@Valid @RequestBody MessageResponse messageResponse) {
-   /* log.info(messageDto);
-
-    Message message = this.messageService.create(this.messageMapper.toEntity(messageDto));
-    return ResponseEntity.ok().body(messageMapper.toDto(message));*/
-    var user = userRepository.findById(messageResponse.getUser_id()).orElseThrow(() -> new RuntimeException("User not found"));
-    var rental = rentalRepository.findById(messageResponse.getRental_id()).orElseThrow(() -> new RuntimeException("Rental not found"));;
-
-    var message = Message.builder()
+    var users = userRepository.findById(messageResponse.getUser_id()).orElseThrow(() -> new RuntimeException("User not found"));
+    var rentals = rentalRepository.findById(messageResponse.getRental_id()).orElseThrow(() -> new RuntimeException("Rental not found"));
+    var messages = Message.builder()
       .message(messageResponse.getMessage())
-      .user(user)
-      .rental(rental)
+      .user(users)
+      .rental(rentals)
       .build();
-    messageRepository.save(message);
-    return new ResponseEntity<>(new Message("Message sent with success !"), HttpStatus.CREATED);
+    messageRepository.save(messages);
+    return new ResponseEntity<>(new StringResponse("Message sent with success !"), HttpStatus.CREATED);
   }
 
 }

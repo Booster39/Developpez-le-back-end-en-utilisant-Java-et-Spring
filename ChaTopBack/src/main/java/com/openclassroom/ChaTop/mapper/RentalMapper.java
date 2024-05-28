@@ -4,6 +4,7 @@ import com.openclassroom.ChaTop.dto.RentalDto;
 import com.openclassroom.ChaTop.models.Rental;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.openclassroom.ChaTop.models.User;
 import com.openclassroom.ChaTop.repository.UserRepository;
@@ -30,6 +31,8 @@ public class RentalMapper implements EntityMapper<RentalDto, Rental> {
     rental.price( dto.getPrice() );
     rental.picture( dto.getPicture() );
     rental.description( dto.getDescription() );
+    rental.created_at(dto.getCreated_at());
+    rental.updated_at(dto.getUpdated_at());
 
     User owner = userRepository.findById(dto.getOwner_id()).orElse(null);
     rental.owner(owner);
@@ -52,6 +55,9 @@ public class RentalMapper implements EntityMapper<RentalDto, Rental> {
     rentalDto.setPicture( entity.getPicture() );
     rentalDto.setDescription( entity.getDescription() );
     rentalDto.setOwner_id(entity.getOwner().getId());
+    rentalDto.setCreated_at(entity.getCreated_at());
+    rentalDto.setUpdated_at(entity.getUpdated_at());
+
 
 
     return rentalDto;
@@ -63,12 +69,9 @@ public class RentalMapper implements EntityMapper<RentalDto, Rental> {
       return null;
     }
 
-    List<Rental> list = new ArrayList<Rental>( dtoList.size() );
-    for ( RentalDto rentalDto : dtoList ) {
-      list.add( toEntity( rentalDto ) );
-    }
-
-    return list;
+    return dtoList.stream()
+      .map(this::toEntity)
+      .collect(Collectors.toList());
   }
 
   @Override
@@ -77,11 +80,8 @@ public class RentalMapper implements EntityMapper<RentalDto, Rental> {
       return null;
     }
 
-    List<RentalDto> list = new ArrayList<RentalDto>( entityList.size() );
-    for ( Rental rental : entityList ) {
-      list.add( toDto( rental ) );
-    }
-
-    return list;
+    return entityList.stream()
+      .map(this::toDto)
+      .collect(Collectors.toList());
   }
 }
