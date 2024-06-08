@@ -1,5 +1,4 @@
 package com.openclassroom.ChaTop.service;
-
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,11 +10,10 @@ import java.util.UUID;
 
 @Service
 public class FileStorageService {
-
   private final Path storageLocation;
 
   public FileStorageService() {
-    this.storageLocation = Paths.get("uploads").toAbsolutePath().normalize();
+    this.storageLocation = Paths.get("ChaTopBack/src/main/resources/static/public/");
     try {
       Files.createDirectories(this.storageLocation);
     } catch (IOException e) {
@@ -30,7 +28,7 @@ public class FileStorageService {
       // Copy the file to the target location
       Path targetLocation = this.storageLocation.resolve(fileName);
       Files.copy(file.getInputStream(), targetLocation);
-      return targetLocation.toString(); // Return the path to the stored file
+      return "http://localhost:3001/public/" +fileName; // Return the path to the stored file
     } catch (IOException e) {
       throw new RuntimeException("Could not store file " + fileName, e);
     }

@@ -18,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -76,10 +75,9 @@ public class RentalController {
   }
 
 
-  @PostMapping(value = "/{id}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<StringResponse> create(
     //@formatter:off
-    @PathVariable("id") String id,
     @RequestPart("picture") MultipartFile multipartFile,
     @RequestParam("name") @NotBlank @Size(max=63) String name,
     @RequestParam("surface") @Min(0) float surface,
@@ -94,12 +92,9 @@ public class RentalController {
         .orElseThrow(() -> new RuntimeException("User not found"));
       String picturePath = fileStorageService.savePicture(multipartFile);
       var dateTimeFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH);
-
       // Format the LocalDate to a string
       String formattedDateString = owner.getCreated_at().format(dateTimeFormatter);
-
       Rental candidate = Rental.builder()
-        .id(Long.valueOf(id))
         .owner(owner)
         .name(name)
         .surface(surface)

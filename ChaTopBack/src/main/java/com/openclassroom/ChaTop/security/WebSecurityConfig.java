@@ -65,6 +65,7 @@ public class WebSecurityConfig {
         .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
         .antMatchers("/api/auth/**").permitAll()
         .antMatchers("/api/**").permitAll()
+        .antMatchers("/public/**").permitAll()
         .anyRequest().authenticated())
       .exceptionHandling(exception -> exception
         .authenticationEntryPoint(authEntryPointJwt));

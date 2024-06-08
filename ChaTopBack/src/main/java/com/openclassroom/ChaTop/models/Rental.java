@@ -37,7 +37,6 @@ public class Rental {
     private float price;
 
     @NonNull
-    @Size(max = 255)
     private String picture;
 
     @NonNull

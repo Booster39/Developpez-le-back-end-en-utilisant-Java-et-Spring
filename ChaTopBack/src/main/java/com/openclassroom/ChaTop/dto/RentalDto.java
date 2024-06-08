@@ -24,7 +24,6 @@ public class RentalDto {
   private float price;
 
   @NonNull
-  @Size(max = 255)
   private String picture;
 
   @NonNull
