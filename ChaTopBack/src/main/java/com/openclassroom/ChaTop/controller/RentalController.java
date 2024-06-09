@@ -10,6 +10,8 @@ import com.openclassroom.ChaTop.repository.UserRepository;
 import com.openclassroom.ChaTop.security.jwt.JwtUtils;
 import com.openclassroom.ChaTop.service.FileStorageService;
 import com.openclassroom.ChaTop.service.RentalService;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,46 +27,70 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/rentals")
 @Log4j2
+@Tag(name = "Rentals", description = "API pour la gestion des locations")
 public class RentalController {
+
   @Autowired
-  private  RentalMapper rentalMapper;
+  private RentalMapper rentalMapper;
+
   @Autowired
   private RentalService rentalService;
+
   @Autowired
   private JwtUtils jwtUtils;
+
   @Autowired
   private UserRepository userRepository;
+
   @Autowired
   private RentalRepository rentalRepository;
 
   private final FileStorageService fileStorageService;
 
-  public RentalController( FileStorageService fileStorageService) {
+  public RentalController(FileStorageService fileStorageService) {
     this.fileStorageService = fileStorageService;
   }
 
+  @Operation(summary = "Obtenir toutes les locations", description = "Retourne une liste de toutes les locations.")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Liste des locations",
+      content = @Content(mediaType = "application/json", schema = @Schema(implementation = RentalDto.class))),
+    @ApiResponse(responseCode = "400", description = "Requête invalide",
+      content = @Content)
+  })
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<HashMap<String, List<RentalDto>>> findAll() {
     try {
-    List<Rental> rentals = this.rentalService.findAll();
-    var response = new HashMap<String, List<RentalDto>>();
-    response.put("rentals", this.rentalMapper.toDto(rentals));
-    return ResponseEntity.ok().body(response);
-    } catch (Exception e)
-    {
+      List<Rental> rentals = this.rentalService.findAll();
+      var response = new HashMap<String, List<RentalDto>>();
+      response.put("rentals", this.rentalMapper.toDto(rentals));
+      return ResponseEntity.ok().body(response);
+    } catch (Exception e) {
       return ResponseEntity.badRequest().build();
     }
   }
 
+  @Operation(summary = "Obtenir une location par ID", description = "Retourne une location spécifique basée sur l'ID fourni.")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Détails de la location",
+      content = @Content(mediaType = "application/json", schema = @Schema(implementation = RentalDto.class))),
+    @ApiResponse(responseCode = "400", description = "Requête invalide",
+      content = @Content),
+    @ApiResponse(responseCode = "404", description = "Location non trouvée",
+      content = @Content)
+  })
   @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<RentalDto> findById(@PathVariable("id") String id) {
     try {
       Rental rental = this.rentalService.findById(Long.valueOf(id));
-
       if (rental == null) {
         return ResponseEntity.notFound().build();
       }
@@ -74,17 +100,21 @@ public class RentalController {
     }
   }
 
-
+  @Operation(summary = "Créer une nouvelle location", description = "Crée une nouvelle location et retourne un message de succès.")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Location créée avec succès",
+      content = @Content(mediaType = "application/json", schema = @Schema(implementation = StringResponse.class))),
+    @ApiResponse(responseCode = "400", description = "Requête invalide",
+      content = @Content)
+  })
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<StringResponse> create(
-    //@formatter:off
     @RequestPart("picture") MultipartFile multipartFile,
-    @RequestParam("name") @NotBlank @Size(max=63) String name,
+    @RequestParam("name") @NotBlank @Size(max = 63) String name,
     @RequestParam("surface") @Min(0) float surface,
     @RequestParam("price") @Min(0) float price,
-    @RequestParam("description") @Size(max=2000) String description,
-    @RequestHeader(value="Authorization",required = false) String jwt
-    //@formatter:on
+    @RequestParam("description") @Size(max = 2000) String description,
+    @RequestHeader(value = "Authorization", required = false) String jwt
   ) {
     try {
       String username = jwtUtils.getUserNameFromJwtToken(jwt.substring(7));
@@ -92,7 +122,6 @@ public class RentalController {
         .orElseThrow(() -> new RuntimeException("User not found"));
       String picturePath = fileStorageService.savePicture(multipartFile);
       var dateTimeFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH);
-      // Format the LocalDate to a string
       String formattedDateString = owner.getCreated_at().format(dateTimeFormatter);
       Rental candidate = Rental.builder()
         .owner(owner)
@@ -106,13 +135,20 @@ public class RentalController {
 
       this.rentalRepository.save(candidate);
       return ResponseEntity.ok().body(new StringResponse("Rental created !"));
-    }  catch (Exception e)
-  {
-    return ResponseEntity.badRequest().build();
-  }
+    } catch (Exception e) {
+      return ResponseEntity.badRequest().build();
+    }
   }
 
-
+  @Operation(summary = "Mettre à jour une location existante", description = "Met à jour une location existante et retourne un message de succès.")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Location mise à jour avec succès",
+      content = @Content(mediaType = "application/json", schema = @Schema(implementation = StringResponse.class))),
+    @ApiResponse(responseCode = "400", description = "Requête invalide",
+      content = @Content),
+    @ApiResponse(responseCode = "404", description = "Location non trouvée",
+      content = @Content)
+  })
   @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> update(
     @PathVariable("id") String id,
@@ -146,6 +182,4 @@ public class RentalController {
       return ResponseEntity.badRequest().build();
     }
   }
-
-
 }
