@@ -120,7 +120,9 @@ public class RentalController {
       String username = jwtUtils.getUserNameFromJwtToken(jwt.substring(7));
       User owner = this.userRepository.findByEmail(username)
         .orElseThrow(() -> new RuntimeException("User not found"));
-      String picturePath = fileStorageService.savePicture(multipartFile);
+      String pictureName = fileStorageService.savePicture(multipartFile);
+      String portPath = "http://localhost:3001/public/";
+      String picturePath = portPath + pictureName;
       var dateTimeFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH);
       String formattedDateString = owner.getCreated_at().format(dateTimeFormatter);
       Rental candidate = Rental.builder()

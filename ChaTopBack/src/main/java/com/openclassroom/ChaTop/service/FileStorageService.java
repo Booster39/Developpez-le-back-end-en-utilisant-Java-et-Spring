@@ -28,7 +28,7 @@ public class FileStorageService {
       // Copy the file to the target location
       Path targetLocation = this.storageLocation.resolve(fileName);
       Files.copy(file.getInputStream(), targetLocation);
-      return "http://localhost:3001/public/" +fileName; // Return the path to the stored file
+      return  fileName; // Return the path to the stored file
     } catch (IOException e) {
       throw new RuntimeException("Could not store file " + fileName, e);
     }
