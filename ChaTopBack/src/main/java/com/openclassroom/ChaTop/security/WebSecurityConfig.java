@@ -64,7 +64,6 @@ public class WebSecurityConfig {
         .antMatchers("/auth/welcome", "/auth/register", "/auth/login").permitAll()
         .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
         .antMatchers("/api/auth/**").permitAll()
-        .antMatchers("/api/**").permitAll()
         .antMatchers("/public/**").permitAll()
         .anyRequest().authenticated())
       .exceptionHandling(exception -> exception
