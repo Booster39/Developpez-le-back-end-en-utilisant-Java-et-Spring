@@ -11,6 +11,34 @@ import java.util.UUID;
 @Service
 public class FileStorageService {
   private final Path storageLocation;
+/*
+  @Value("${application.pictures.path}")
+  private String picturesPath;
+
+  @Value("${application.pictures.url}")
+  private String picturesUrl;
+
+  @Override
+  public String savePicture(MultipartFile picture) {
+    File pictureFolder = new File(picturesPath);
+
+    // If picture folder does not exist, create it
+    if (!pictureFolder.exists() && pictureFolder.mkdirs() || pictureFolder.exists() && pictureFolder.isDirectory()) {
+      // That is the new name of the picture, we use UUID to avoid conflicts
+      String pictureFileName = UUID.randomUUID().toString();
+      File pictureFile = new File(pictureFolder, pictureFileName);
+
+      try {
+        // Saving the picture to the file and returning the URL
+        picture.transferTo(pictureFile);
+        return picturesUrl + "/" + pictureFileName;
+      } catch (Exception e) {
+        logger.error("Failed to save picture", e);
+      }
+    }
+    throw new ResponseEntityException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to save picture");
+  }
+*/
 
   public FileStorageService() {
     this.storageLocation = Paths.get("ChaTopBack/src/main/resources/static/public/");

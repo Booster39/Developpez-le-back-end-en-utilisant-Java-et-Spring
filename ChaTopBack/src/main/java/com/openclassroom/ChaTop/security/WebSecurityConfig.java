@@ -62,7 +62,7 @@ public class WebSecurityConfig {
     http
       .authorizeHttpRequests(auth -> auth
         .antMatchers("/auth/welcome", "/auth/register", "/auth/login").permitAll()
-        .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+        .antMatchers("/v3/api-docs/**", "v3/swagger-ui/**", "v3/swagger-ui.html").permitAll()
         .antMatchers("/api/auth/**").permitAll()
         .antMatchers("/public/**").permitAll()
         .anyRequest().authenticated())
