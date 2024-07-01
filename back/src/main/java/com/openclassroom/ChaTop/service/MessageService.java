@@ -9,22 +9,20 @@ import com.openclassroom.ChaTop.payload.response.MessageResponse;
 import com.openclassroom.ChaTop.repository.MessageRepository;
 import com.openclassroom.ChaTop.repository.RentalRepository;
 import com.openclassroom.ChaTop.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MessageService {
+  @Autowired
+  private MessageRepository messageRepository;
+  @Autowired
+  private UserRepository userRepository;
+  @Autowired
+  private RentalRepository rentalRepository;
+  @Autowired
+  private MessageMapper messageMapper;
 
-  private final MessageRepository messageRepository;
-  private final UserRepository userRepository;
-  private final RentalRepository rentalRepository;
-  private final MessageMapper messageMapper;
-
-  public MessageService(MessageRepository messageRepository, UserRepository userRepository, RentalRepository rentalRepository, MessageMapper messageMapper) {
-    this.messageRepository = messageRepository;
-    this.userRepository = userRepository;
-    this.rentalRepository = rentalRepository;
-    this.messageMapper = messageMapper;
-  }
 
   public MessageDto createMessage(MessageResponse messageResponse) {
     User user = userRepository.findById(messageResponse.getUser_id())

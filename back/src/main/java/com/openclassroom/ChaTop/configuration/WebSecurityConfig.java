@@ -35,25 +35,24 @@ public class WebSecurityConfig {
   @Autowired
   private UserDetailsService userDetailsService;
 
+  @Autowired
+  private AuthEntryPointJwt authEntryPointJwt;
+
+
   @Bean
   public AuthTokenFilter authenticationJwtTokenFilter() {
     return new AuthTokenFilter();
   }
-
-  @Autowired
-  private AuthEntryPointJwt authEntryPointJwt;
 
   @Bean
   public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
     return authenticationConfiguration.getAuthenticationManager();
   }
 
-
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
-
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

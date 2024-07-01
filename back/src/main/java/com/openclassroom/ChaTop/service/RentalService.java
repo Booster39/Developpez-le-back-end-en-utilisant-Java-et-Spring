@@ -5,6 +5,7 @@ import com.openclassroom.ChaTop.models.User;
 import com.openclassroom.ChaTop.repository.RentalRepository;
 import com.openclassroom.ChaTop.repository.UserRepository;
 import com.openclassroom.ChaTop.security.jwt.JwtUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,17 +17,14 @@ import java.util.Locale;
 import java.util.UUID;
 @Service
 public class RentalService {
-  private final RentalRepository rentalRepository;
-  private final UserRepository userRepository;
-  private final JwtUtils jwtUtils;
-  private final FileStorageService fileStorageService;
-
-  public RentalService(RentalRepository rentalRepository, UserRepository userRepository, JwtUtils jwtUtils, FileStorageService fileStorageService) {
-    this.rentalRepository = rentalRepository;
-    this.userRepository = userRepository;
-    this.jwtUtils = jwtUtils;
-    this.fileStorageService = fileStorageService;
-  }
+  @Autowired
+  private RentalRepository rentalRepository;
+  @Autowired
+  private UserRepository userRepository;
+  @Autowired
+  private JwtUtils jwtUtils;
+  @Autowired
+  private FileStorageService fileStorageService;
 
   public List<Rental> findAll() {
     return this.rentalRepository.findAll();
