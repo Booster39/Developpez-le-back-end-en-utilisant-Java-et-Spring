@@ -13,6 +13,7 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
 import { MeComponent } from './components/me/me.component';
 import { MatCardModule } from '@angular/material/card';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { SessionService } from './services/session.service';
 
 const materialModule = [
   MatButtonModule,
@@ -36,8 +37,9 @@ const materialModule = [
     ...materialModule
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true,  },
   ],
+
   bootstrap: [AppComponent]
 })
 export class AppModule { }
