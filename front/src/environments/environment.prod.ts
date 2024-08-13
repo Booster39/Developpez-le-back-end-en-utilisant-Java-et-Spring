@@ -1,4 +1,4 @@
 export const environment = {
-  baseUrl: 'localhost:3001/api/',
+  baseUrl: process.env["INTERNAL_API_URL"] || 'localhost:3001/api/',
   production: true
 };
