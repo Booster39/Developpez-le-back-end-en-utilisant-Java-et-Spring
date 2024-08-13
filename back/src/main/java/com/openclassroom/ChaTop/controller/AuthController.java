@@ -33,7 +33,7 @@ import java.util.Optional;
 
 
 @RestController
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "https://your-angular-project.vercel.app", maxAge = 3600)
 @RequestMapping("/api/auth")
 @Tag(name = "Auth", description = "API pour l'authentification et l'inscription des utilisateurs")
 public class AuthController {
