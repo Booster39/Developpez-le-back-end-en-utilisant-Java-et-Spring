@@ -1,6 +1,6 @@
 {
     "/api/*": {
-        "target": "http://positive-vibrancy-production.up.railway.app:8080",
+        "target": "http://positive-vibrancy-production.up.railway.app",
         "secure": false,
         "changeOrigin": true,
         "logLevel": "debug"

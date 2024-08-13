@@ -55,6 +55,20 @@ public class WebSecurityConfig {
   }
 
   @Bean
+  public WebMvcConfigurer webMvcConfigurer() {
+      return new WebMvcConfigurer() {
+          @Override
+          public void addCorsMappings(CorsRegistry registry) {
+              registry.addMapping("/**")
+                  .allowedOrigins("https://developpez-le-back-end-en-utilisant-java-et-spring.vercel.app/")
+                  .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS")
+                  .allowedHeaders("*")
+                  .allowCredentials(true);
+          }
+      };
+  }
+
+  @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http
       .csrf(AbstractHttpConfigurer::disable)
