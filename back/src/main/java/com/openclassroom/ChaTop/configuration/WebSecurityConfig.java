@@ -60,7 +60,7 @@ public class WebSecurityConfig {
           @Override
           public void addCorsMappings(CorsRegistry registry) {
               registry.addMapping("/**")
-                  .allowedOrigins("https://developpez-le-back-end-en-utilisant-java-et-spring.vercel.app/")
+                  .allowedOrigins("https://developpez-le-back-end-en-utilisant-java-et-spring.vercel.app/api")
                   .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS")
                   .allowedHeaders("*")
                   .allowCredentials(true);
