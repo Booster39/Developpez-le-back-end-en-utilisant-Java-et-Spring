@@ -1,4 +1,4 @@
 export const environment = {
-  baseUrl: "http://positive-vibrancy.railway.internal",
+  baseUrl: "http://localhost/8080",
   production: true
 };
