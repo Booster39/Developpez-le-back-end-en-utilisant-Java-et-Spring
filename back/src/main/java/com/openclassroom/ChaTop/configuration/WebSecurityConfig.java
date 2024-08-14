@@ -62,7 +62,7 @@ public class WebSecurityConfig {
               registry.addMapping("/**")
                   .allowedOrigins("https://developpez-le-back-end-en-utilisant-java-et-spring-ayeytbw54.vercel.app/")
                   .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS")
-                  .allowedHeaders("*")
+                  .allowedHeaders("Authorization", "Content-Type", "Accept")
                   .allowCredentials(true);
           }
       };
