@@ -63,9 +63,9 @@ public class WebSecurityConfig {
       .csrf(AbstractHttpConfigurer::disable)
       .cors(cors -> cors.configurationSource(request -> {
                   var corsConfiguration = new org.springframework.web.cors.CorsConfiguration();
-                  corsConfiguration.setAllowedOrigins(List.of("https://developpez-le-back-end-en-utilisant-java-et-spring-ayeytbw54.vercel.app/", "https://developpez-le-back-end-en-utilisant-java-et-spring.vercel.app/", "https://developpez-le-back-end-en-utilisant-java-et-spring-83dpuo080.vercel.app/"));
-                  corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"));
-                  corsConfiguration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
+                  corsConfiguration.setAllowedOrigins(List.of("https://developpez-le-back-end-en-utilisant-java-et-spring-ayeytbw54.vercel.app/", "https://developpez-le-back-end-en-utilisant-java-et-spring.vercel.app/", "https://developpez-le-back-end-en-utilisant-java-et-spring-83dpuo080.vercel.app/", "*"));
+                  corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "*"));
+                  corsConfiguration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "*"));
                   corsConfiguration.setAllowCredentials(true);
                   corsConfiguration.setMaxAge(3600L); // Cache pre-flight response for 1 hour
                   return corsConfiguration;
