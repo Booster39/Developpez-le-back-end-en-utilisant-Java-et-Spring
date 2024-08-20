@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 
 
 @Entity
-@Table(name = "RENTALS")
+@Table(name = "rentals")
 @Data
 @Accessors(chain = true)
 @EntityListeners(AuditingEntityListener.class)

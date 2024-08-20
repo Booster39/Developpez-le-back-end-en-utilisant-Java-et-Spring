@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "MESSAGES")
+@Table(name = "messages")
 @Data
 @Accessors(chain = true)
 @EntityListeners(AuditingEntityListener.class)
