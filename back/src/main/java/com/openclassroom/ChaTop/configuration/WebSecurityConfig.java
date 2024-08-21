@@ -63,7 +63,7 @@ public class WebSecurityConfig {
       .csrf(AbstractHttpConfigurer::disable)
       .cors(cors -> cors.configurationSource(request -> {
                   var corsConfiguration = new org.springframework.web.cors.CorsConfiguration();
-                  corsConfiguration.setAllowedOrigins(List.of( "https://positive-vibrancy-production.up.railway.app/**"));
+                  corsConfiguration.setAllowedOrigins(List.of( "https://developpez-le-back-end-en-utilisant-java-et-spring.vercel.app/"));
                   corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "*"));
                   corsConfiguration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "*"));
                   corsConfiguration.setAllowCredentials(true);
