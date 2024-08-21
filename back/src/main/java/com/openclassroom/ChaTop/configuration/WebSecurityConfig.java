@@ -63,8 +63,8 @@ public class WebSecurityConfig {
       .csrf(AbstractHttpConfigurer::disable)
       .cors(cors -> cors.configurationSource(request -> {
                   var corsConfiguration = new org.springframework.web.cors.CorsConfiguration();
-                  corsConfiguration.setAllowedOrigins(List.of( "https://positive-vibrancy-production.up.railway.app/api/**"));
-                  corsConfiguration.setAllowedMethods(List.of("*"));
+                  corsConfiguration.setAllowedOrigins(List.of( "https://positive-vibrancy-production.up.railway.app/**"));
+                  corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "*"));
                   corsConfiguration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "*"));
                   corsConfiguration.setAllowCredentials(true);
                   return corsConfiguration;
