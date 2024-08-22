@@ -3,13 +3,14 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MessageRequest } from '../interfaces/api/messageRequest.interface';
 import { MessageResponse } from '../interfaces/api/messageResponse.interface';
+import { environment } from '../../../../environments/environment.prod'; 
 
 @Injectable({
   providedIn: 'root'
 })
 export class MessagesService {
 
-  private pathService = 'api/messages';
+  private pathService = `${environment.baseUrl}/messages`;
 
   constructor(private httpClient: HttpClient) { }
 
